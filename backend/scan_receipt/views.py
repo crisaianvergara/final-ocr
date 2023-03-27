@@ -143,11 +143,11 @@ class ScanListAPIView(APIView):
         nltk.download("wordnet", quiet=True)
         nltk.download("stopwords", quiet=True)
 
+        formatted_date = extract_and_format_date(result, date_patterns)
+
         for receipt_text in result:
             filtered_words = preprocess(receipt_text)
             description = classify_description(filtered_words)
-
-        formatted_date = extract_and_format_date(result, date_patterns)
 
         data = {
             "date": formatted_date,
