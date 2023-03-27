@@ -1,1 +1,4 @@
 rmdir /S .git
+
+pip install django-cors-headers
+pip install "python-doctr[tf]"

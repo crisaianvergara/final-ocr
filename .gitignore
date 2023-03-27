@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/django,nextjs
 # Edit at https://www.toptal.com/developers/gitignore?templates=django,nextjs
 
+### VS Code ###
+.vscode/
+
 ### Django ###
 *.log
 *.pot
