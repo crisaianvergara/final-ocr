@@ -10,7 +10,10 @@ def extract_and_format_date(result, patterns):
             match = re.search(pattern, item)
             if match:
                 date = match.group(0).strip()
+                if len(date) > 15:
+                    date = date[6:]
                 formats = [
+                    "%Y-%m-%d",
                     "%d-%m-%y",
                     "%m/%d/%y",
                     "%m/%d/%Y",

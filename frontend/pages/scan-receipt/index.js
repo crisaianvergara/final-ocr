@@ -14,30 +14,33 @@ export const getStaticProps = async () => {
     };
 };
 
-const ScanReceipt = ({ receipts }) => {
+const ScanReceipt = ({ receipts: initialReceipts }) => {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
+    const [receipts, setReceipts] = useState(initialReceipts);
 
     const handleUpload = async () => {
         const formData = new FormData();
         formData.append("image", file);
         setUploading(true);
         try {
-        const response = await fetch("http://127.0.0.1:8000/scans/api/", {
-            method: "POST",
-            body: formData,
-        });
-        const data = await response.json();
-        console.log(data);
+            const response = await fetch("http://127.0.0.1:8000/scans/api/", {
+                method: "POST",
+                body: formData,
+            });
+            const data = await response.json();
+            console.log(data);
+            setReceipts([data, ...receipts]);
+            setFile(null);
+            message.success("Receipt scanned successfully.");
         } catch (error) {
-        console.error(error);
-        message.error("Error during upload.");
+            console.error(error);
+            message.error("Error during upload.");
         }
         setUploading(false);
     };
 
-  const columns = [
-
+    const columns = [
         {
             title: "Date",
             dataIndex: "date",
@@ -70,45 +73,45 @@ const ScanReceipt = ({ receipts }) => {
         },
     ];
 
-  return (
-    <>
-        <Head>
-            <title>Zia Apps | Scan Receipt</title>
-            <meta name="keywords" content="zia apps" />
-        </Head>
-        <div>
-            <h1>Scan Receipt</h1>
-            <Form>
-                <Form.Item>
-                    <Dragger
-                        beforeUpload={(file) => {
-                        setFile(file);
-                        return false;
-                        }}
-                    >
-                        <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">
-                        Click or drag file to this area to upload
-                        </p>
-                        <p className="ant-upload-hint">Support for a single upload.</p>
-                    </Dragger>
-                </Form.Item>
-                <Form.Item>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        onClick={handleUpload}
-                        disabled={!file || uploading}
-                    >
-                        Scan Receipt
-                    </Button>
-                </Form.Item>
-            </Form>
-            <Table dataSource={receipts} columns={columns} rowKey="id" />
-        </div>
-    </>
+    return (
+        <>
+            <Head>
+                <title>Zia Apps | Scan Receipt</title>
+                <meta name="keywords" content="zia apps" />
+            </Head>
+            <div>
+                <h1>Scan Receipt</h1>
+                <Form>
+                    <Form.Item>
+                        <Dragger
+                            beforeUpload={(file) => {
+                                setFile(file);
+                                return false;
+                            }}
+                        >
+                            <p className="ant-upload-drag-icon">
+                                <InboxOutlined />
+                            </p>
+                            <p className="ant-upload-text">
+                                Click or drag file to this area to upload
+                            </p>
+                            <p className="ant-upload-hint">Support for a single upload.</p>
+                        </Dragger>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            onClick={handleUpload}
+                            disabled={!file || uploading}
+                        >
+                            Scan Receipt
+                        </Button>
+                    </Form.Item>
+                </Form>
+                <Table dataSource={receipts} columns={columns} rowKey="id" />
+            </div>
+        </>
     );
 };
 

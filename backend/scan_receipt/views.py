@@ -24,6 +24,9 @@ class ScanListAPIView(APIView):
         image_bytes = BytesIO(image_data.read())
         receipt = Image.open(image_bytes)
 
+        # CONVERT THE IMAGE TO RGB FORMAT
+        receipt = receipt.convert("RGB")
+
         # OCR MODEL
         model = ocr_predictor(
             det_arch="db_resnet50", reco_arch="crnn_mobilenet_v3_small", pretrained=True
@@ -46,16 +49,14 @@ class ScanListAPIView(APIView):
 
         # DATE PATTERNS
         date_patterns = [
-            r"\d{1,2}/\d{1,2}/\d{2}",
-            r"\s+(\d{1,2}/\d{1,2}/\d{4})",
-            r"Date:\s(\d{4}-\d{2}-\d{2})",
-            r"\d{2}-\d{2}-\d{2}",
-            r"\d{2}/\d{2}/\d{2}",
-            r"\d{2}/\d{2}/\d{4}",
-            r"\b(\d{1,2} [A-Za-z]{3} \d{2})\b",
-            r"\b([A-Z][a-z]{2} \d{1,2},\d{4})\b",
+            r"Date:\s(\d{4}-\d{2}-\d{2})",  # freemont
+            r"\d{2}/\d{2}/\d{4}",  # starbucks, east and seaside
+            r"\b(\d{1,2} [A-Za-z]{3} \d{2})\b",  # jollibee
+            r"\s+(\d{1,2}/\d{1,2}/\d{4})",  # kitchen
+            r"\d{2}/\d{2}/\d{2}",  # walmart
+            r"\d{2}-\d{2}-\d{2}",  # speed and centra # freemont
+            r"\d{1,2}/\d{1,2}/\d{2}",  # bestbuy
         ]
-
         # VENDOR
         new_result = [item for item in result if len(item) >= 2]
         vendor = new_result[0].translate(str.maketrans("", "", ".?"))
@@ -63,7 +64,7 @@ class ScanListAPIView(APIView):
         # TAX
         format_amount_and_tax = r"\d+\.\d+"
 
-        tax = None
+        tax = 0.00
 
         for i in range(len(result)):
             if "Sales Tax 6.25%" in result[i]:
@@ -93,8 +94,8 @@ class ScanListAPIView(APIView):
                 break
 
         # AMOUNT AND CURRENCY
-        amount = None
-        currency = None
+        amount = 0.00
+        currency = "None"
 
         currency_symbols = {
             "$": "USD",

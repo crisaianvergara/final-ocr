@@ -8,7 +8,7 @@ class Scan(models.Model):
     vendor = models.CharField(max_length=100, verbose_name="Vendor")
     amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Amount")
     tax = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Tax")
-    currency = models.CharField(max_length=3, verbose_name="Currency")
+    currency = models.CharField(max_length=4, verbose_name="Currency")
     description = models.TextField(verbose_name="Description")
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True, verbose_name="User"
